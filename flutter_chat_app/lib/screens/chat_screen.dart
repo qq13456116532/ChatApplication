@@ -116,7 +116,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: Text(
-                          'Online Users (${chatProvider.onlineUsers.length})',
+                          'Contacts (${chatProvider.availableUsers.length})',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontSize: 18,
                             color: theme.colorScheme.primary,
@@ -124,25 +124,13 @@ class _ChatScreenState extends State<ChatScreen> {
                         ),
                       ),
                       Expanded(
-                        child:
-                            chatProvider.isConnected &&
-                                chatProvider.onlineUsers.isNotEmpty
-                            ? ListView.builder(
-                                itemCount: chatProvider.onlineUsers.length,
-                                itemBuilder: (context, index) {
-                                  final userId =
-                                      chatProvider.onlineUsers[index];
-                                  return UserListTile(userId: userId);
-                                },
-                              )
-                            : Center(
-                                child: Text(
-                                  chatProvider.isConnected
-                                      ? 'No other users online'
-                                      : 'Not Connected',
-                                  style: theme.textTheme.bodyMedium,
-                                ),
-                              ),
+                        child: ListView.builder(
+                          itemCount: chatProvider.availableUsers.length,
+                          itemBuilder: (context, index) {
+                            final userId = chatProvider.availableUsers[index];
+                            return UserListTile(userId: userId);
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -179,7 +167,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       // Message input area
                       if (chatProvider.selectedChatUserId != null &&
-                          chatProvider.isConnected)
+                          (chatProvider.isConnected ||
+                              chatProvider.selectedChatUserId ==
+                                  chatProvider.chatGptUserId))
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Row(

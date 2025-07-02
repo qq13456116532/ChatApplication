@@ -2,9 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/message_model.dart';
 import '../services/websocket_service.dart';
+import '../services/gpt_service.dart';
 
 class ChatProvider with ChangeNotifier {
   final WebSocketService _webSocketService = WebSocketService();
+  final String chatGptUserId = 'ChatGPT';
+  GptService? _gptService;
+  final List<Map<String, String>> _gptHistory = [];
+  String _gptApiKey = 'YOUR_OPENAI_API_KEY';
   // StreamSubscription? _messageSubscription; // _webSocketService.messages.listen in constructor
 
   String _serverUrl = 'ws://localhost:8008/ws';
@@ -20,6 +25,7 @@ class ChatProvider with ChangeNotifier {
 
   // Getters
   List<String> get onlineUsers => _onlineUsers;
+  List<String> get availableUsers => [chatGptUserId, ..._onlineUsers];
   String? get selectedChatUserId => _selectedChatUserId;
   List<UIMessage> get currentChatMessages =>
       _chatHistories[_selectedChatUserId] ?? [];
@@ -54,6 +60,11 @@ class ChatProvider with ChangeNotifier {
   void setUserId(String id) {
     _userId = id;
     notifyListeners();
+  }
+
+  void setGptApiKey(String key) {
+    _gptApiKey = key;
+    _gptService = GptService(apiKey: _gptApiKey);
   }
 
   Future<void> connect() async {
@@ -188,24 +199,58 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void sendMessage(String text) {
-    if (_selectedChatUserId == null || text.trim().isEmpty || !isConnected) {
+  Future<void> sendMessage(String text) async {
+    if (_selectedChatUserId == null || text.trim().isEmpty) {
       _addDebugLog(
-        "Cannot send: No user selected, message empty, or not connected.",
+        "Cannot send: No user selected or message empty.",
       );
       return;
     }
 
-    _webSocketService.sendMessage(_selectedChatUserId!, text.trim());
+    final target = _selectedChatUserId!;
+    final trimmed = text.trim();
 
     final sentMessage = UIMessage(
-      text: text.trim(),
+      text: trimmed,
       senderId: _userId,
       isMe: true,
     );
-    _addMessageToHistory(_selectedChatUserId!, sentMessage);
-    _addDebugLog("Sent to $_selectedChatUserId: $text");
-    // notifyListeners(); // _addMessageToHistory calls notifyListeners
+    _addMessageToHistory(target, sentMessage);
+    _addDebugLog("Sent to $target: $trimmed");
+
+    if (target == chatGptUserId) {
+      if (_gptService == null) {
+        _gptService = GptService(apiKey: _gptApiKey);
+      }
+      _gptHistory.add({'role': 'user', 'content': trimmed});
+      try {
+        final reply = await _gptService!.sendMessage(_gptHistory);
+        _gptHistory.add({'role': 'assistant', 'content': reply});
+        final gptMsg = UIMessage(
+          text: reply,
+          senderId: chatGptUserId,
+          isMe: false,
+        );
+        _addMessageToHistory(chatGptUserId, gptMsg);
+      } catch (e) {
+        final errMsg = UIMessage(
+          text: 'Error: $e',
+          senderId: chatGptUserId,
+          isMe: false,
+        );
+        _addMessageToHistory(chatGptUserId, errMsg);
+      }
+      return;
+    }
+
+    if (!isConnected) {
+      _addDebugLog(
+        "Cannot send: not connected to server.",
+      );
+      return;
+    }
+
+    _webSocketService.sendMessage(target, trimmed);
   }
 
   Future<void> disconnect() async {
