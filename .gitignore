@@ -1,13 +1,87 @@
-ChatApp\bin\Debug
-flutter_chat_app\build
+# =========================================================================
+# 一般性忽略 (General)
+# =========================================================================
+# 操作系统生成的文件 (OS-generated files)
+.DS_Store
+Thumbs.db
+._*
 
-flutter_chat_app/ios/Flutter/ephemeral/
-flutter_chat_app/linux/flutter/ephemeral/
-flutter_chat_app/windows/flutter/ephemeral/
-flutter_chat_app/web/flutter/ephemeral/
+# 编辑器和IDE的配置文件 (IDE/Editor configurations)
+.idea/
+.vscode/
+*.suo
+*.user
+*.iml
+*.lock
 
-# Dart/Pub
-flutter_chat_app/.dart_tool/
+# 根据您的文件列表生成的临时文件 (User-generated temporary files from your list)
+all_files.txt
+merge.py
+output.txt
+/flutter_chat_app/output.txt
+/flutter_chat_app/merge.py
 
+
+# =========================================================================
+# .NET MAUI 项目 (ChatApp)
+# =========================================================================
+# 编译输出目录
+/ChatApp/bin/
 /ChatApp/obj/
-/ChatApp/obj/Debug
+
+# Visual Studio 临时文件和用户配置
+.vs/
+
+# Rider/ReSharper 缓存
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# WebView2 的缓存目录 (非常重要，必须忽略)
+/ChatApp/bin/**/ChatApp.exe.WebView2/
+/ChatApp/obj/**/ChatApp.exe.WebView2/
+
+# 用户特定的启动设置
+/ChatApp/Properties/launchSettings.json
+
+
+# =========================================================================
+# Flutter 项目 (flutter_chat_app)
+# =========================================================================
+# Flutter 和 Dart 的工具和构建产物
+/flutter_chat_app/build/
+/flutter_chat_app/.dart_tool/
+/flutter_chat_app/.packages
+/flutter_chat_app/.flutter-plugins
+/flutter_chat_app/.flutter-plugins-dependencies
+
+# 特定平台的构建产物和本地配置
+# Android
+/flutter_chat_app/android/.gradle/
+/flutter_chat_app/android/local.properties
+/flutter_chat_app/android/key.properties
+
+# iOS & macOS
+/flutter_chat_app/ios/Pods/
+/flutter_chat_app/ios/.symlinks/
+/flutter_chat_app/ios/Runner.xcworkspace/
+/flutter_chat_app/ios/Runner.xcodeproj/project.xcworkspace/
+/flutter_chat_app/ios/Runner.xcodeproj/xcuserdata/
+/flutter_chat_app/ios/Podfile.lock
+/flutter_chat_app/macos/Pods/
+/flutter_chat_app/macos/Podfile.lock
+/flutter_chat_app/macos/.symlinks/
+/flutter_chat_app/macos/Flutter/ephemeral/
+/flutter_chat_app/**/App.framework
+/flutter_chat_app/**/Flutter.framework
+
+
+# =========================================================================
+# Go 项目 (GoChatServer)
+# =========================================================================
+# 编译后的可执行文件 (Compiled executables)
+/GoChatServer/GoChatServer
+/GoChatServer/GoChatServer.exe
+
+# 依赖管理目录 (如果使用 vendor)
+# /GoChatServer/vendor/
