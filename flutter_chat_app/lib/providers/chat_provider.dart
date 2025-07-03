@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import '../models/message_model.dart';
 import '../services/websocket_service.dart';
 import '../services/gpt_service.dart';
+import 'dart:io';
 
 class ChatProvider with ChangeNotifier {
   final WebSocketService _webSocketService = WebSocketService();
   final String geminiUserId = 'gemini';
   GeminiService? _geminiService;
   final List<Map<String, String>> _geminiHistory = [];
-  String _geminiApiKey = 'AIzaSyCfN_eTNpTYHPE4vvINFwyL8hjwJlWzl08';
-  // StreamSubscription? _messageSubscription; // _webSocketService.messages.listen in constructor
 
   String _serverUrl = 'ws://localhost:8008/ws';
   String _userId = ''; // Initialize with empty or load from storage
@@ -36,9 +35,32 @@ class ChatProvider with ChangeNotifier {
   String get userId => _userId;
   List<String> get debugLog => _debugLog;
 
+  late final String _geminiApiKey;
+
   ChatProvider() {
-    // Listen to messages from WebSocketService
+    // 启动初始化过程
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    // 监听 WebSocket 消息
     _webSocketService.messages.listen(_handleServerMessage);
+
+    try {
+      final directory = Directory.current.path;
+      final filePath = '$directory/文档/Gemini的api key.txt';
+
+      final file = File(filePath);
+      final String apiKey = await file.readAsString();
+
+      _geminiApiKey = apiKey.trim();
+
+      print('读取到的 API Key: $_geminiApiKey');
+
+      // 在这里使用 _geminiApiKey 初始化你的 Gemini 客户端等
+    } catch (e) {
+      print('读取 API Key 时出错: $e');
+    }
   }
 
   void _addDebugLog(String message) {

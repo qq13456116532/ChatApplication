@@ -60,7 +60,7 @@ _ReSharper*/
 /flutter_chat_app/android/.gradle/
 /flutter_chat_app/android/local.properties
 /flutter_chat_app/android/key.properties
-
+flutter_chat_app/test/widget_test.dart
 # iOS & macOS
 /flutter_chat_app/ios/Pods/
 /flutter_chat_app/ios/.symlinks/
