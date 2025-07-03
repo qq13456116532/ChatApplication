@@ -1,30 +1,41 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class GptService {
+class GeminiService {
   final String apiKey;
   final String apiUrl;
 
-  const GptService({required this.apiKey, this.apiUrl = 'https://api.openai.com/v1/chat/completions'});
+  const GeminiService({
+    required this.apiKey,
+    this.apiUrl =
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+  });
 
-  Future<String> sendMessage(List<Map<String, String>> messages) async {
+  Future<String> sendMessage(String message) async {
     final response = await http.post(
       Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $apiKey',
-      },
+      headers: {'Content-Type': 'application/json', 'X-goog-api-key': apiKey},
       body: jsonEncode({
-        'model': 'gpt-3.5-turbo',
-        'messages': messages,
+        'contents': [
+          {
+            'parts': [
+              {'text': message},
+            ],
+          },
+        ],
       }),
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      return data['choices'][0]['message']['content'] as String;
+      final candidates = data['candidates'];
+      if (candidates != null && candidates.isNotEmpty) {
+        return candidates[0]['content']['parts'][0]['text'] ?? '';
+      } else {
+        throw Exception('No candidates returned from Gemini.');
+      }
     } else {
-      throw Exception('GPT request failed: ${response.body}');
+      throw Exception('Gemini request failed: ${response.body}');
     }
   }
 }

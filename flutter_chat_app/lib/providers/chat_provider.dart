@@ -6,10 +6,10 @@ import '../services/gpt_service.dart';
 
 class ChatProvider with ChangeNotifier {
   final WebSocketService _webSocketService = WebSocketService();
-  final String chatGptUserId = 'ChatGPT';
-  GptService? _gptService;
-  final List<Map<String, String>> _gptHistory = [];
-  String _gptApiKey = 'YOUR_OPENAI_API_KEY';
+  final String geminiUserId = 'gemini';
+  GeminiService? _geminiService;
+  final List<Map<String, String>> _geminiHistory = [];
+  String _geminiApiKey = 'AIzaSyCfN_eTNpTYHPE4vvINFwyL8hjwJlWzl08';
   // StreamSubscription? _messageSubscription; // _webSocketService.messages.listen in constructor
 
   String _serverUrl = 'ws://localhost:8008/ws';
@@ -25,7 +25,7 @@ class ChatProvider with ChangeNotifier {
 
   // Getters
   List<String> get onlineUsers => _onlineUsers;
-  List<String> get availableUsers => [chatGptUserId, ..._onlineUsers];
+  List<String> get availableUsers => [geminiUserId, ..._onlineUsers];
   String? get selectedChatUserId => _selectedChatUserId;
   List<UIMessage> get currentChatMessages =>
       _chatHistories[_selectedChatUserId] ?? [];
@@ -63,8 +63,8 @@ class ChatProvider with ChangeNotifier {
   }
 
   void setGptApiKey(String key) {
-    _gptApiKey = key;
-    _gptService = GptService(apiKey: _gptApiKey);
+    _geminiApiKey = key;
+    _geminiService = GeminiService(apiKey: _geminiApiKey);
   }
 
   Future<void> connect() async {
@@ -199,54 +199,53 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  String _combineHistory(List<Map<String, String>> history) {
+    return history.map((e) => "${e['role']}: ${e['content']}").join('\n');
+  }
+
   Future<void> sendMessage(String text) async {
     if (_selectedChatUserId == null || text.trim().isEmpty) {
-      _addDebugLog(
-        "Cannot send: No user selected or message empty.",
-      );
+      _addDebugLog("Cannot send: No user selected or message empty.");
       return;
     }
 
     final target = _selectedChatUserId!;
     final trimmed = text.trim();
 
-    final sentMessage = UIMessage(
-      text: trimmed,
-      senderId: _userId,
-      isMe: true,
-    );
+    final sentMessage = UIMessage(text: trimmed, senderId: _userId, isMe: true);
     _addMessageToHistory(target, sentMessage);
     _addDebugLog("Sent to $target: $trimmed");
 
-    if (target == chatGptUserId) {
-      if (_gptService == null) {
-        _gptService = GptService(apiKey: _gptApiKey);
+    if (target == geminiUserId) {
+      if (_geminiService == null) {
+        _geminiService = GeminiService(apiKey: _geminiApiKey);
       }
-      _gptHistory.add({'role': 'user', 'content': trimmed});
+      _geminiHistory.add({'role': 'user', 'content': trimmed});
       try {
-        final reply = await _gptService!.sendMessage(_gptHistory);
-        _gptHistory.add({'role': 'assistant', 'content': reply});
+        final prompt = _combineHistory(_geminiHistory);
+        final reply = await _geminiService!.sendMessage(prompt);
+
+        // final reply = await _geminiService!.sendMessage(_geminiHistory);
+        _geminiHistory.add({'role': 'assistant', 'content': reply});
         final gptMsg = UIMessage(
           text: reply,
-          senderId: chatGptUserId,
+          senderId: geminiUserId,
           isMe: false,
         );
-        _addMessageToHistory(chatGptUserId, gptMsg);
+        _addMessageToHistory(geminiUserId, gptMsg);
       } catch (e) {
         final errMsg = UIMessage(
           text: 'Error: $e',
-          senderId: chatGptUserId,
+          senderId: geminiUserId,
           isMe: false,
         );
-        _addMessageToHistory(chatGptUserId, errMsg);
+        _addMessageToHistory(geminiUserId, errMsg);
       }
       return;
     }
 
     if (!isConnected) {
-      _addDebugLog(
-        "Cannot send: not connected to server.",
-      );
+      _addDebugLog("Cannot send: not connected to server.");
       return;
     }
 

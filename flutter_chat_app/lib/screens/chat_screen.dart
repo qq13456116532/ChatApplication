@@ -169,7 +169,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       if (chatProvider.selectedChatUserId != null &&
                           (chatProvider.isConnected ||
                               chatProvider.selectedChatUserId ==
-                                  chatProvider.chatGptUserId))
+                                  chatProvider.geminiUserId))
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Row(
