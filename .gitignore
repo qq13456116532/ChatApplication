@@ -9,3 +9,5 @@ flutter_chat_app/web/flutter/ephemeral/
 # Dart/Pub
 flutter_chat_app/.dart_tool/
 
+/ChatApp/obj/
+/ChatApp/obj/Debug
