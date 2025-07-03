@@ -41,14 +41,15 @@ class ChatProvider with ChangeNotifier {
     // 启动初始化过程
     _initialize();
   }
-
   Future<void> _initialize() async {
     // 监听 WebSocket 消息
     _webSocketService.messages.listen(_handleServerMessage);
 
     try {
-      final directory = Directory.current.path;
-      final filePath = '$directory/文档/Gemini的api key.txt';
+      final userProfile = Platform.environment['USERPROFILE']; // Windows 环境变量
+      if (userProfile == null) throw Exception("找不到用户目录 USERPROFILE");
+
+      final filePath = '$userProfile\\Documents\\Gemini的api key.txt';
 
       final file = File(filePath);
       final String apiKey = await file.readAsString();
