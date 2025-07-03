@@ -1,10 +1,10 @@
-# Go-C#/flutter WebSocket Chat Application
+# Go-C#/Flutter WebSocket Chat Application
 
 [中文版](README_zh.md)
 
 ## Project Introduction
 
-This is a WebSocket chat application built with Go and C#. The backend uses Go to provide WebSocket services, while the frontend leverages the Flutter or Maui Blazor hybrid framework for a modern user interface. The application supports real-time messaging, dynamic user list updates, and broadcast messages. It is implemented via WebSocket for bidirectional communication, making it suitable for learning purposes and small-scale chat applications.
+This is a WebSocket chat application built with a Go backend and two alternative frontends: C# MAUI Blazor and Flutter. The application supports real-time messaging, dynamic user list updates, broadcast messages, and AI-powered chat via the Gemini API. It is designed for learning purposes and as a template for small-scale chat applications.
 
 ------
 
@@ -16,9 +16,10 @@ This is a WebSocket chat application built with Go and C#. The backend uses Go t
 ![img](images/8.png)
 ![img](images/9.png)
 
+#### 与Gemini的交流： 
+![img](images/10.png)
 
-
-### Csharp's Blazor Hybrid Chat Interface
+### C# Blazor Hybrid Chat Interface
 
 ![img](images/2.png)
 ![img](images/3.png)
@@ -34,13 +35,14 @@ This is a WebSocket chat application built with Go and C#. The backend uses Go t
 
 ## Features
 
-1. **Real-time Messaging**: Enables users to send and receive messages in real time.
-2. **Broadcast Messages**: Admins can send global broadcast messages via the terminal.
-3. **Dynamic User List**: Displays active users, automatically updated when users join or leave.
-4. **Avatar Management**: Allows users to customize their avatars, with updates visible to others in real time.
-5. **Message Storage**: The frontend stores chat history for users to view past conversations.
-
-
+1.  **Dual Chat Modes**: Seamlessly switch between chatting with online users and conversing with the Gemini AI (Flutter).
+2.  **Real-time Messaging**: Enables users to send and receive messages in real time.
+3.  **Gemini AI Integration**: Engage in intelligent, human-like conversations with Google's Gemini model.
+4.  **Dynamic User List**: Displays active users, automatically updated when users join or leave.
+5.  **Cross-Platform**: Choose between a C# MAUI Blazor hybrid app or a Flutter app, both capable of running on multiple platforms.
+6.  **Avatar Management**: Allows users to customize their avatars, with updates visible to others in real time (C#).
+7.  **Message Storage**: The frontend stores chat history for users to view past conversations.
+8.  **Broadcast Messages**: Admins can send global broadcast messages via the backend terminal.
 
 ------
 
@@ -48,121 +50,118 @@ This is a WebSocket chat application built with Go and C#. The backend uses Go t
 
 ### Prerequisites
 
-1. Install the latest version of Go.
-2. Install .NET 9.0 or flutter.
-3. Ensure `curl` or another tool is available to test the WebSocket service.
+1.  Install the latest version of Go.
+2.  Install the Flutter SDK and/or .NET 8.0.
+3.  A Google Gemini API Key: [Get API Key](https://aistudio.google.com/app/apikey) (required for AI chat features).
 
 ------
 
 ### Quick Start
-if you use flutter GUI, then open `flutter_chat_app` ,else open `ChatApp`
 
-#### Install flutter
-it is easy to install.
+#### 1. Backend Setup
 
+First, get the backend server running.
 
-#### Install MAUI Workload
+1.  Navigate to the backend directory:
+    ```bash
+    cd GoChatServer
+    ```
+2.  Start the Go service:
+    ```bash
+    go run main.go
+    ```
+3.  The WebSocket service will run at `ws://localhost:8008/ws`.
 
-Run the following command:
+---
 
-```bash
-dotnet workload install maui
-```
+#### 2. Frontend Setup
 
-#### Set Up Development Environment
+Choose one of the frontend applications to run.
 
-Open the project in `VSCode` and install the following extensions:
+##### Option A: Flutter Frontend
 
-- `.NET Install Tool`
-- `.NET MAUI`
-- `C#`
-- `Go`
-- `flutter`
+1.  **API Key Setup (Important!)**
+    This application loads the Gemini API key from a local file.
+    -   **On Windows:**
+        1.  Open your `Documents` folder (e.g., `C:\Users\YourUsername\Documents`).
+        2.  Create a new text file named `Gemini的api key.txt`.
+        3.  Paste your Gemini API key into this file and save it.
+    -   **On macOS/Linux:**
+        You will need to modify the `_initialize` method in `lib/providers/chat_provider.dart` to point to a valid file path on your system.
+
+2.  **Run the App**
+    ```bash
+    # Navigate to the Flutter app directory
+    cd flutter_chat_app
+
+    # Install dependencies
+    flutter pub get
+
+    # Run the app (e.g., on Windows desktop)
+    flutter run -d windows
+    ```
+3.  **Connect**
+    -   In the app, keep the default server URL (`ws://localhost:8008/ws`).
+    -   Enter a unique User ID and click **Connect**.
+    -   Select "gemini" to chat with the AI, or select another user.
+
+##### Option B: C# MAUI Blazor Frontend
+
+1.  **Install MAUI Workload**
+    ```bash
+    dotnet workload install maui
+    ```
+2.  **Run the App**
+    ```bash
+    # Navigate to the C# app directory
+    cd ChatApp
+
+    # Restore dependencies
+    dotnet restore
+
+    # Run the project
+    dotnet build -t:Run -f net8.0-windows10.0.19041.0
+    ```
+    Alternatively, open the `ChatApp.sln` in Visual Studio or VS Code with the C# and .NET MAUI extensions and run it from there.
 
 ------
-
-#### Backend
-
-1. Navigate to the backend directory `GoChatServer`.
-
-2. Start the Go service by running:
-
-   ```bash
-   go run main.go
-   ```
-
-3. The WebSocket service will run at `http://localhost:8008/ws`.
-
-------
-
-#### Frontend
-if you use flutter:
-1. Navigate to the frontend directory `flutter_chat_app`.
-2. Run 
-   ```bash
-   flutter run -d windows
-   ```
-
-
-if you use Csharp Blazor Hybrid:
-1. Navigate to the frontend directory `MyChatApp`.
-
-2. Restore project dependencies:
-
-   ```bash
-   dotnet restore
-   ```
-
-3. Open the `MauiProgram.cs` file. You should see something like this:
-   ![img](README.assets/1.png)
-
-   - Click `Debug Target` at the bottom.
-   - Run the project by clicking the Run button.
-
-------
-
-### Additional Notes
-
-It is recommended to modify the save location for images in `MyChatApp\Components\Layout\ProfilePopover.razor`. Currently, images are saved in the project runtime directory. For production, consider using a third-party hosting service.
-The main application logic resides in `MyChatApp\Components\Pages`.
-
-
 
 ## Project Structure
 
-### Backend (Go)
+#### Backend (`GoChatServer/`)
 
-- Provides WebSocket services and listens on port `8008`.
-- Manages user connections, message forwarding, user list broadcasting, and disconnections.
-- Built with the `gorilla/websocket` library for WebSocket communication.
+-   `main.go`: Handles WebSocket connections, message broadcasting, and user management using the `gorilla/websocket` library.
 
-Key files and functions:
+#### Frontend (`flutter_chat_app/`)
 
-- `main.go`: Main program handling user management and message processing.
+-   `lib/`: Contains the core Dart code for the Flutter application.
+-   `lib/providers/chat_provider.dart`: Manages state, WebSocket connection, and Gemini API calls.
+-   `lib/screens/chat_screen.dart`: The main UI for the chat interface.
+-   `pubspec.yaml`: Defines project dependencies.
 
-### Frontend (C#)
+#### Frontend (`ChatApp/`)
 
-- Built with Maui Blazor hybrid and MudBlazor frameworks to deliver a modern chat interface.
-- Connects to the backend WebSocket service for real-time communication.
-- Supports displaying various message types, including system and user messages.
-
-Key files and functions:
-
-- `Chat.razor`: Chat interface component, responsible for rendering the chat window and user messages.
-- `ChatService.cs`: Logic for communicating with the backend WebSocket service.
-
-
+-   `Components/Pages/`: Contains the main Razor components for the UI.
+-   `Services/ChatService.cs`: Handles the WebSocket client logic.
+-   `MauiProgram.cs`: Configures the .NET MAUI application and services.
 
 ## Project Dependencies
 
-### Backend Dependencies
+#### Backend (Go)
 
-- `github.com/gorilla/websocket`: For WebSocket functionality.
+-   `github.com/gorilla/websocket`: For WebSocket functionality.
 
-### Frontend Dependencies
+#### Frontend (Flutter)
 
-- `MudBlazor`: To create a modern UI.
-- `.NET WebSocket`: For backend communication.
+-   `provider`: For state management.
+-   `web_socket_channel`: For WebSocket communication.
+-   `http`: For making requests to the Gemini API.
+-   `intl`: For date formatting.
+
+#### Frontend (C#)
+
+-   `MudBlazor`: For a modern UI component library.
+-   `.NET WebSocket`: For native WebSocket communication.
 
 ------
 
@@ -170,15 +169,9 @@ Key files and functions:
 
 We welcome suggestions and code contributions to this project:
 
-1. Fork the repository.
-
-2. Create a feature branch:
-
-   ```bash
-   git checkout -b feature/<your-feature>
-   ```
-
-3. Commit your changes and submit a Pull Request.
+1.  Fork the repository.
+2.  Create a feature branch: `git checkout -b feature/<your-feature>`
+3.  Commit your changes and submit a Pull Request.
 
 ------
 
