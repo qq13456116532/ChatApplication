@@ -16,7 +16,7 @@ This is a WebSocket chat application built with a Go backend and two alternative
 ![img](images/8.png)
 ![img](images/9.png)
 
-#### 与Gemini的交流： 
+#### Communication with Gemini： 
 ![img](images/10.png)
 
 ### C# Blazor Hybrid Chat Interface
@@ -40,7 +40,7 @@ This is a WebSocket chat application built with a Go backend and two alternative
 3.  **Gemini AI Integration**: Engage in intelligent, human-like conversations with Google's Gemini model.
 4.  **Dynamic User List**: Displays active users, automatically updated when users join or leave.
 5.  **Cross-Platform**: Choose between a C# MAUI Blazor hybrid app or a Flutter app, both capable of running on multiple platforms.
-6.  **Avatar Management**: Allows users to customize their avatars, with updates visible to others in real time (C#).
+6.  **Avatar Management**: Allows users to customize their avatars, with updates @visible to others in real time (C#).
 7.  **Message Storage**: The frontend stores chat history for users to view past conversations.
 8.  **Broadcast Messages**: Admins can send global broadcast messages via the backend terminal.
 
